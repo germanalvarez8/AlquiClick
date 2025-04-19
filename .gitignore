@@ -1,10 +1,56 @@
-.idea/
-.vscode/
-/coverage/
-/vendor/
-/logs/*
-!/logs/README.md
-.phpunit.result.cache
-.env
+# Dependencies
+/frontend/node_modules
+/backend/vendor
+/backend/node_modules
+/node_modules
+/package-lock.json
+# Environment files
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.*.local
+/backend/.env
+/backend/.env.backup
+/backend/.env.production
+
+# Build files
+/frontend/dist
+/frontend/dist-ssr
+/frontend/*.local
+/backend/public/build
+/backend/public/hot
+/backend/public/storage
+/backend/storage/*.key
+
+# IDE files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 .DS_Store
-app/.DS_Store
+
+# Laravel specific
+/backend/bootstrap/cache/*
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/storage/logs/*
+/backend/storage/app/public/*
+/backend/.phpunit.result.cache
+/backend/phpunit.xml
+/backend/public/storage
+/backend/storage/*.key
+
+# Logs
+/frontend/logs
+/frontend/*.log
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+/frontend/lerna-debug.log*
+
+# Docker
+/mysql_data

@@ -1,43 +1,69 @@
-version: '3'
+version: '3.8'
+
 services:
-  app:
-    platform: linux/arm64
+  backend:
     build:
-      context: .
-      dockerfile: docker/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: alquiclick-backend
+    restart: unless-stopped
     ports:
-      - "8000:9000"
+      - "8000:80"
     volumes:
-      - .:/var/www
+      - ./backend:/var/www/html
     depends_on:
       - db
+    networks:
+      - alquiclick-network
 
-  web:
-    image: nginx:alpine
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: alquiclick-frontend
+    restart: unless-stopped
     ports:
-      - 80:80
+      - "5173:5173"
     volumes:
-      - ./:/var/www
-      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - alquiclick-network
 
   db:
-    image: mysql:latest
-    restart: always
-    platform: linux/x86_64
+    image: mysql:8.0
+    container_name: alquiclick-db
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: alquiClick
+      MYSQL_DATABASE: alquiclick
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: root
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - dbdata:/var/lib/mysql
     networks:
-      - app_network
-volumes:
-  db_data:
+      - alquiclick-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: alquiclick-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db
+    networks:
+      - alquiclick-network
 
 networks:
-  app_network:
-    driver: "bridge"
+  alquiclick-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
