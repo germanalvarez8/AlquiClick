@@ -3,8 +3,8 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: alquiclick-backend
     restart: unless-stopped
     ports:
@@ -12,7 +12,8 @@ services:
     volumes:
       - ./backend:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - alquiclick-network
 
@@ -37,12 +38,15 @@ services:
     environment:
       MYSQL_DATABASE: alquiclick
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: root
-      MYSQL_USER: root
     ports:
       - "3306:3306"
     volumes:
       - dbdata:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost -u root --password=root
+      interval: 5s
+      timeout: 10s
+      retries: 10
     networks:
       - alquiclick-network
 
@@ -56,7 +60,8 @@ services:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: root
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - alquiclick-network
 
